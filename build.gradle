@@ -1,0 +1,105 @@
+//plugins {
+//    id 'java'
+//    id 'war'
+//    id 'idea'
+//    id 'maven'
+//}
+
+
+// 可以，用冒号隔开
+apply plugin : 'java'
+apply plugin : 'war'
+apply plugin : 'idea'
+apply plugin: 'org.akhikhl.gretty'
+
+
+//=========================================
+buildscript {
+    repositories {
+        mavenCentral()
+        // enable this to use snapshot versions of Gretty:
+        // maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
+    }
+
+    dependencies {
+//        classpath 'org.gretty:gretty:+'
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
+repositories {
+    mavenCentral()
+    // enable this to use snapshot versions of Gretty:
+    // maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }
+}
+if (!project.plugins.findPlugin(org.akhikhl.gretty.GrettyPlugin))
+    project.apply(plugin: org.akhikhl.gretty.GrettyPlugin)
+//=========================================
+
+gretty {
+    httpPort = 8080
+    contextPath = '/gradle——demo01'
+    host = 'localhost'
+    httpEnabled = 'true'
+    servletContainer = 'tomcat8'
+ // 热部署
+    scanInterval = 1
+    fastReload = 'true'
+// 日志级别
+    loggingLevel = 'DEBUG'
+    consoleLogEnabled= 'true'
+
+    // 调试配置：
+    debugPort = 8888
+    // 调试挂起
+    debugSuspend =true
+
+}
+
+sourceSets{
+    main{
+        java{
+            srcDir 'src/main/xxx/asdf'
+        }
+        resources{
+            srcDir 'src/main/yyy'
+        }
+    }
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+compileJava {
+    sourceCompatibility JavaVersion.VERSION_1_8.toString()
+    targetCompatibility JavaVersion.VERSION_1_8.toString()
+}
+
+// jar包私服镜像配置,两个dependencies可以同时存在
+//dependencies{
+//    repositories {
+//  maven{
+//      url: XXXXXX
+//  }
+//    }
+//}
+//task.outputs.cacheIf { true }
+
+//bytex.forbidUseLenientMutationDuringGetArtifact=true.
+
+dependencies {
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+//    testCompile group: 'junit', name: 'junit', version: '4.11'
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation group: 'org.mybatis', name: 'mybatis', version: '3.4.6'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// 编码统一为 UTF-8
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+}
+[compileJava,javadoc,compileTestJava]*.options*.encoding="UTF-8"
